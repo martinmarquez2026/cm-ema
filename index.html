@@ -4,177 +4,89 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Centro de Mando · EMA</title>
-
-<!-- ===== PWA (app instalable) ===== -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#1B3A6B">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="EMA">
 <link rel="apple-touch-icon" href="icon-192.png">
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
 <style>
   :root{
-    --bg:#F0F4F8;
-    --navy:#1B3A6B;
-    --blue:#2563A8;
-    --gold:#C9A84C;
-    --card:#FFFFFF;
-    --ink:#1B2A41;
-    --muted:#6B7A90;
-    --line:#E3EAF2;
-    --radius:16px;
-    --pill:50px;
+    --bg:#F0F4F8;--navy:#1B3A6B;--blue:#2563A8;--gold:#C9A84C;--card:#FFFFFF;
+    --ink:#1B2A41;--muted:#6B7A90;--line:#E3EAF2;--radius:16px;--pill:50px;
     --shadow:0 1px 2px rgba(27,58,107,.04), 0 8px 24px rgba(27,58,107,.06);
     --shadow-hover:0 4px 10px rgba(27,58,107,.10), 0 16px 40px rgba(27,58,107,.14);
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%}
-  body{
-    font-family:'Inter',system-ui,-apple-system,sans-serif;
-    background:var(--bg);
-    color:var(--ink);
-    -webkit-font-smoothing:antialiased;
-    line-height:1.45;
-  }
+  body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.45}
   a{color:inherit;text-decoration:none}
-
-  /* ===== Password gate ===== */
-  #gate{
-    position:fixed;inset:0;z-index:100;
-    background:linear-gradient(160deg,#1B3A6B 0%, #142d54 100%);
-    display:flex;align-items:center;justify-content:center;padding:24px;
-  }
+  #gate{position:fixed;inset:0;z-index:100;background:linear-gradient(160deg,#1B3A6B 0%, #142d54 100%);display:flex;align-items:center;justify-content:center;padding:24px}
   #gate.hidden{display:none}
-  .gate-card{
-    width:100%;max-width:360px;text-align:center;color:#fff;
-  }
-  .gate-logo{
-    width:64px;height:64px;border-radius:18px;margin:0 auto 22px;
-    background:#142d54;display:flex;align-items:center;justify-content:center;
-    font-weight:800;font-size:22px;letter-spacing:.5px;
-    box-shadow:0 0 0 1px rgba(255,255,255,.08);position:relative;
-  }
+  .gate-card{width:100%;max-width:360px;text-align:center;color:#fff}
+  .gate-logo{width:64px;height:64px;border-radius:18px;margin:0 auto 22px;background:#142d54;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:22px;letter-spacing:.5px;box-shadow:0 0 0 1px rgba(255,255,255,.08);position:relative}
   .gate-logo::after{content:"";position:absolute;bottom:14px;width:30px;height:3px;border-radius:2px;background:var(--gold)}
   .gate-card h1{font-size:19px;font-weight:700;margin-bottom:6px}
   .gate-card p{font-size:13px;color:#A9BCD8;margin-bottom:26px}
-  .gate-input{
-    width:100%;padding:14px 18px;border-radius:var(--pill);border:none;
-    font-size:15px;font-family:inherit;outline:none;text-align:center;
-    background:#fff;color:var(--ink);
-  }
+  .gate-input{width:100%;padding:14px 18px;border-radius:var(--pill);border:none;font-size:15px;font-family:inherit;outline:none;text-align:center;background:#fff;color:var(--ink)}
   .gate-input:focus{box-shadow:0 0 0 3px rgba(201,168,76,.55)}
-  .gate-btn{
-    width:100%;margin-top:12px;padding:14px;border:none;border-radius:var(--pill);
-    background:var(--gold);color:#3a2e07;font-weight:700;font-size:15px;font-family:inherit;
-    cursor:pointer;transition:transform .12s ease, filter .12s ease;
-  }
+  .gate-btn{width:100%;margin-top:12px;padding:14px;border:none;border-radius:var(--pill);background:var(--gold);color:#3a2e07;font-weight:700;font-size:15px;font-family:inherit;cursor:pointer;transition:transform .12s ease, filter .12s ease}
   .gate-btn:hover{filter:brightness(1.05)}
   .gate-btn:active{transform:scale(.98)}
   .gate-err{min-height:18px;margin-top:14px;font-size:13px;color:#FFC9C9;opacity:0;transition:opacity .2s}
   .gate-err.show{opacity:1}
   @keyframes shake{10%,90%{transform:translateX(-2px)}30%,70%{transform:translateX(4px)}50%{transform:translateX(-6px)}}
   .shake{animation:shake .4s}
-
-  /* ===== App shell ===== */
   #app{opacity:0;transition:opacity .4s ease}
   #app.ready{opacity:1}
-  .wrap{max-width:1080px;margin:0 auto;padding:24px 20px 64px;
-        padding-top:max(24px, env(safe-area-inset-top))}
-
+  .wrap{max-width:1080px;margin:0 auto;padding:24px 20px 64px;padding-top:max(24px, env(safe-area-inset-top))}
   header.top{display:flex;align-items:center;gap:14px;margin-bottom:22px}
-  .logo{
-    width:46px;height:46px;border-radius:13px;flex:none;
-    background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;
-    font-weight:800;font-size:16px;letter-spacing:.4px;position:relative;
-  }
+  .logo{width:46px;height:46px;border-radius:13px;flex:none;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;letter-spacing:.4px;position:relative}
   .logo::after{content:"";position:absolute;bottom:10px;width:22px;height:2.5px;border-radius:2px;background:var(--gold)}
   .brand h1{font-size:16px;font-weight:700;color:var(--navy);line-height:1.1}
   .brand span{font-size:12px;color:var(--muted)}
-
-  /* search */
   .search-row{position:relative;margin-bottom:10px}
-  .search{
-    width:100%;padding:15px 46px 15px 46px;border-radius:var(--pill);
-    border:1px solid var(--line);background:#fff;font-size:15px;font-family:inherit;
-    color:var(--ink);outline:none;box-shadow:var(--shadow);transition:box-shadow .15s, border-color .15s;
-  }
+  .search{width:100%;padding:15px 46px 15px 46px;border-radius:var(--pill);border:1px solid var(--line);background:#fff;font-size:15px;font-family:inherit;color:var(--ink);outline:none;box-shadow:var(--shadow);transition:box-shadow .15s, border-color .15s}
   .search::placeholder{color:#9AA8BC}
   .search:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,168,.14)}
   .search-ico{position:absolute;left:17px;top:50%;transform:translateY(-50%);color:#9AA8BC;font-size:16px;pointer-events:none}
-  .search-clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);
-    border:none;background:#EEF3F9;color:var(--muted);width:30px;height:30px;border-radius:50%;
-    cursor:pointer;font-size:15px;display:none;align-items:center;justify-content:center}
+  .search-clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:none;background:#EEF3F9;color:var(--muted);width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:15px;display:none;align-items:center;justify-content:center}
   .search-clear.show{display:flex}
-
-  /* pending banner */
-  .note{
-    display:flex;align-items:center;gap:9px;margin:14px 0 26px;padding:11px 16px;
-    background:#FBF6E7;border:1px solid #EBDDB4;border-radius:12px;
-    font-size:13px;color:#7a6420;
-  }
+  .note{display:flex;align-items:center;gap:9px;margin:14px 0 26px;padding:11px 16px;background:#FBF6E7;border:1px solid #EBDDB4;border-radius:12px;font-size:13px;color:#7a6420}
   .note b{font-weight:700}
   .note.hidden{display:none}
-
-  /* zones */
   .zone{margin-bottom:30px}
   .zone-head{display:flex;align-items:baseline;gap:10px;margin-bottom:13px;padding-left:2px}
   .zone-num{font-size:12px;font-weight:700;color:var(--gold);letter-spacing:1px}
   .zone-title{font-size:13px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:1.2px}
   .zone-sub{font-size:12px;color:var(--muted)}
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(212px,1fr));gap:13px}
-
-  .card{
-    display:flex;align-items:center;gap:13px;padding:16px;background:var(--card);
-    border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);
-    cursor:pointer;transition:transform .14s ease, box-shadow .14s ease, border-color .14s ease;
-    position:relative;
-  }
+  .card{display:flex;align-items:center;gap:13px;padding:16px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);cursor:pointer;transition:transform .14s ease, box-shadow .14s ease, border-color .14s ease;position:relative}
   .card:hover{transform:translateY(-2px);box-shadow:var(--shadow-hover);border-color:#D4E0EE}
   .card:focus-visible{outline:3px solid rgba(37,99,168,.4);outline-offset:2px}
-  .card .ic{
-    width:42px;height:42px;flex:none;border-radius:11px;background:#EEF3F9;
-    display:flex;align-items:center;justify-content:center;font-size:20px;
-  }
+  .card .ic{width:42px;height:42px;flex:none;border-radius:11px;background:#EEF3F9;display:flex;align-items:center;justify-content:center;font-size:20px}
   .card .tx{min-width:0}
   .card .tx b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:14px;font-weight:600;color:var(--ink);line-height:1.2;overflow-wrap:break-word}
   .card .tx small{display:block;font-size:12px;color:var(--muted);margin-top:1px}
   .card .go{margin-left:auto;color:#C2CEDD;font-size:15px;transition:color .14s, transform .14s}
   .card:hover .go{color:var(--blue);transform:translateX(2px)}
-
-  /* secondary (discreet) card */
   .card.sec{background:#F7FAFD;box-shadow:none}
   .card.sec .ic{background:#E7EEF6;font-size:17px;width:38px;height:38px}
-
-  /* pending card */
   .card.pending{border-style:dashed;border-color:#D6E0EC;background:#FAFCFE;cursor:default}
   .card.pending:hover{transform:none;box-shadow:var(--shadow);border-color:#D6E0EC}
   .card.pending .ic{opacity:.55}
   .card.pending .tx b{color:var(--muted)}
-  .tag{margin-left:auto;font-size:10px;font-weight:700;letter-spacing:.5px;color:#A98E3C;
-       background:#FBF3DC;border:1px solid #EBDDB4;padding:3px 8px;border-radius:50px}
-
   .empty{display:none;text-align:center;color:var(--muted);font-size:14px;padding:40px 0}
   .empty.show{display:block}
-
   footer{margin-top:40px;text-align:center;font-size:12px;color:#A4B2C5}
-
-  @media (max-width:480px){
-    .grid{grid-template-columns:1fr 1fr;gap:10px}
-    .card{padding:13px;gap:10px}
-    .card .ic{width:38px;height:38px;font-size:18px}
-    .card .tx small{display:none}
-  }
+  @media (max-width:480px){.grid{grid-template-columns:1fr 1fr;gap:10px}.card{padding:13px;gap:10px}.card .ic{width:38px;height:38px;font-size:18px}.card .tx small{display:none}}
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
-
-<!-- ====== GATE ====== -->
 <div id="gate">
   <div class="gate-card">
     <div class="gate-logo">EMA</div>
@@ -185,53 +97,26 @@
     <div id="err" class="gate-err">Contraseña incorrecta.</div>
   </div>
 </div>
-
-<!-- ====== APP ====== -->
 <div id="app">
   <div class="wrap">
     <header class="top">
       <div class="logo">EMA</div>
-      <div class="brand">
-        <h1>Centro de Mando</h1>
-        <span>Seguros y Estrategias Patrimoniales</span>
-      </div>
+      <div class="brand"><h1>Centro de Mando</h1><span>Seguros y Estrategias Patrimoniales</span></div>
     </header>
-
     <div class="search-row">
       <span class="search-ico">⌕</span>
       <input id="search" class="search" type="text" placeholder="Buscar acceso… (ORVI, CRM, cotizador…)" autocomplete="off">
       <button id="clear" class="search-clear" aria-label="Limpiar">✕</button>
     </div>
-
     <div id="note" class="note"><span>⚙️</span><span><b id="pendCount">0</b> accesos aún sin enlazar — se activan pegando su link en la sección de configuración del archivo.</span></div>
-
     <div id="zones"></div>
     <div id="empty" class="empty">Sin resultados para tu búsqueda.</div>
-
     <footer>EMA · CNSF G408760 · uso interno</footer>
   </div>
 </div>
-
 <script>
-/* ============================================================
-   🔒 1) TU CONTRASEÑA  — cambia la palabra de abajo
-   ============================================================ */
 const CLAVE = "ema2026";
-
-/* ============================================================
-   🗂️ 2) TU CRM (un solo Google Sheet con varias pestañas)
-        Pega la URL del CRM UNA sola vez aquí abajo.
-        Los tiles CRM, Resumen y Plantillas son pestañas del
-        MISMO archivo: cada uno solo necesita su "gid".
-        Para sacar un gid: abre el CRM, haz clic en la pestaña,
-        y copia el número que aparece tras "#gid=" en la barra.
-   ============================================================ */
 const CRM_BASE = "https://docs.google.com/spreadsheets/d/1vPnF401zEvoawkd7CYbMk7cSbJfqJul4LjwKs-AV6_4/edit";
-
-/* ============================================================
-   🔗 3) EL RESTO DE ACCESOS — pega cada link entre las "".
-        Lo que dejes vacío aparece como "pendiente".
-   ============================================================ */
 const ZONES = [
   { num:"01", title:"Operación", sub:"Tu cabina diaria", items:[
     { ic:"🗂️", t:"CRM",            s:"pestaña HOY",        gid:"743441287", fam:true },
@@ -246,7 +131,7 @@ const ZONES = [
     { ic:"🪪", t:"Tarjeta WhatsApp", s:"generador",        url:"" },
   ]},
   { num:"03", title:"Presentar", sub:"En vivo, frente al cliente", items:[
-    { ic:"▶️", t:"Sesión V2",      s:"ANF · presentador",  url:"https://martinmarquez2026.github.io/sesion1-smnyl/presentador-anf.html" },
+    { ic:"▶️", t:"Sesión V2",      s:"presentador + cliente",  url:"https://martinmarquez2026.github.io/sesion1-smnyl/presentador-anf.html", url2:"https://martinmarquez2026.github.io/sesion1-smnyl/cliente-anf.html" },
     { ic:"🏛️", t:"ORVI",           s:"ahorro",             url:"" },
     { ic:"🌅", t:"Imagina Ser",    s:"retiro PPR",         url:"" },
     { ic:"🎓", t:"SEGUBECA",       s:"educativo",          url:"" },
@@ -275,33 +160,16 @@ const ZONES = [
     { ic:"👤", t:"Expedientes",    s:"por cliente",        url:"" },
   ]},
 ];
-
-/* ============================================================
-   (de aquí para abajo no necesitas tocar nada)
-   ============================================================ */
-const gate=document.getElementById('gate'),pwd=document.getElementById('pwd'),
-      err=document.getElementById('err'),app=document.getElementById('app');
-
+const gate=document.getElementById('gate'),pwd=document.getElementById('pwd'),err=document.getElementById('err'),app=document.getElementById('app');
 function unlock(){gate.classList.add('hidden');app.classList.add('ready');sessionStorage.setItem('ema_ok','1');render();}
-function tryEnter(){
-  if(pwd.value===CLAVE){unlock();}
-  else{err.classList.add('show');const c=gate.querySelector('.gate-card');c.classList.remove('shake');void c.offsetWidth;c.classList.add('shake');pwd.value='';pwd.focus();}
-}
+function tryEnter(){if(pwd.value===CLAVE){unlock();}else{err.classList.add('show');const c=gate.querySelector('.gate-card');c.classList.remove('shake');void c.offsetWidth;c.classList.add('shake');pwd.value='';pwd.focus();}}
 document.getElementById('enter').onclick=tryEnter;
 pwd.addEventListener('keydown',e=>{if(e.key==='Enter')tryEnter();});
 if(sessionStorage.getItem('ema_ok')==='1'){unlock();}else{setTimeout(()=>pwd.focus(),300);}
-
-/* render zones */
 const zonesEl=document.getElementById('zones');
 function norm(s){return (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');}
-
-/* resuelve la URL: link directo, o CRM_BASE + #gid si es pestaña del CRM */
-function resolveUrl(it){
-  if(it.url && it.url.trim()) return it.url.trim();
-  if(it.gid!==undefined && CRM_BASE.trim()) return CRM_BASE.trim().replace(/#.*$/,'') + '#gid=' + it.gid;
-  return '';
-}
-
+function openBoth(a,b){ window.open(b,'_blank'); window.open(a,'_blank'); }
+function resolveUrl(it){if(it.url && it.url.trim())return it.url.trim();if(it.gid!==undefined && CRM_BASE.trim())return CRM_BASE.trim().replace(/#.*$/,'')+'#gid='+it.gid;return '';}
 function render(){
   let pending=0;
   zonesEl.innerHTML=ZONES.map(z=>{
@@ -311,29 +179,17 @@ function render(){
       const cls='card'+(it.sec?' sec':'')+(it.fam?' fam':'')+(has?'':' pending');
       const right=has?'<span class="go">→</span>':'';
       const tag='data-text="'+norm(it.t+' '+it.s)+'"';
-      const open=has?`onclick="window.open('${u}','_blank')"`:'';
+      const open=has ? (it.url2 ? `onclick="openBoth('${u}','${it.url2}')"` : `onclick="window.open('${u}','_blank')"`) : '';
       const role=has?'role="link" tabindex="0"':'';
-      return `<div class="${cls}" ${tag} ${open} ${role}>
-        <div class="ic">${it.ic}</div>
-        <div class="tx"><b>${it.t}</b><small>${it.s}</small></div>
-        ${right}</div>`;
+      return `<div class="${cls}" ${tag} ${open} ${role}><div class="ic">${it.ic}</div><div class="tx"><b>${it.t}</b><small>${it.s}</small></div>${right}</div>`;
     }).join('');
-    return `<section class="zone" data-zone>
-      <div class="zone-head"><span class="zone-num">${z.num}</span>
-      <span class="zone-title">${z.title}</span><span class="zone-sub">${z.sub}</span></div>
-      <div class="grid">${cards}</div></section>`;
+    return `<section class="zone" data-zone><div class="zone-head"><span class="zone-num">${z.num}</span><span class="zone-title">${z.title}</span><span class="zone-sub">${z.sub}</span></div><div class="grid">${cards}</div></section>`;
   }).join('');
   document.getElementById('pendCount').textContent=pending;
   document.getElementById('note').classList.toggle('hidden',pending===0);
-  // keyboard open on cards
-  zonesEl.querySelectorAll('.card[role=link]').forEach(c=>{
-    c.addEventListener('keydown',e=>{if(e.key==='Enter')c.click();});
-  });
+  zonesEl.querySelectorAll('.card[role=link]').forEach(c=>{c.addEventListener('keydown',e=>{if(e.key==='Enter')c.click();});});
 }
-
-/* search filter */
-const search=document.getElementById('search'),clear=document.getElementById('clear'),
-      emptyEl=document.getElementById('empty');
+const search=document.getElementById('search'),clear=document.getElementById('clear'),emptyEl=document.getElementById('empty');
 search.addEventListener('input',()=>{
   const q=norm(search.value.trim());
   clear.classList.toggle('show',q.length>0);
@@ -351,11 +207,7 @@ search.addEventListener('input',()=>{
   emptyEl.classList.toggle('show',!anyVisible);
 });
 clear.onclick=()=>{search.value='';search.dispatchEvent(new Event('input'));search.focus();};
-
-/* PWA */
-if('serviceWorker' in navigator){
-  window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
-}
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}
 </script>
 </body>
 </html>
